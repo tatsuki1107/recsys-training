@@ -1,0 +1,9 @@
+version: '3.7'
+services:
+  recsys_path:
+    build: .
+    volumes:
+      - ./:/work
+    ports:
+      - 8888:8888
+    tty: true
