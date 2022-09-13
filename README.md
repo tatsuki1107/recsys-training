@@ -4,5 +4,5 @@ https://recsyslab.github.io/recsys-python/を参考に
 preprocessing, レコメンドアルゴリズム, 評価を学修
 
 ## 内容ベース推薦
-コサイン類似度
+コサイン類似度\
 k近傍法
