@@ -20,3 +20,14 @@ class DataLoader:
         ])
         
         return dataset
+    
+    def userItemMatrix() -> np.array:
+        dataset = np.array([
+              [np.nan, 4,      3,      1,      2,      np.nan],
+              [5,      5,      4,      np.nan, 3,      3     ],
+              [4,      np.nan, 5,      3,      2,      np.nan],
+              [np.nan, 3,      np.nan, 2,      1,      1     ],
+              [2,      1,      2,      4,      np.nan, 3     ],
+        ])
+        
+        return dataset
