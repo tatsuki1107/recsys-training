@@ -1,8 +1,7 @@
 version: '3.7'
 services:
   recsys_path:
-    image: "tatsuki1107/ml_training"
-    container_name: recsys_container
+    build: .
     volumes:
       - ./:/work
     ports:
