@@ -39,12 +39,12 @@ class train:
         
     def ranking_train(self) -> float:
     
-        for i in range(300):
+        for i in range(150):
             self.feature.append(round(random.uniform(1,5),2))
             self.populality.append(round(random.uniform(1,5),2))
             self.item_id.append(str(i+1))
         
-            if i == 209:
+            if i == 104:
                 df_train = self.make_dataframe()
                 self.feature, self.item_id, self.populality = [], [], []
         

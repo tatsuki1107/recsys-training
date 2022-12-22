@@ -5,7 +5,7 @@ class evalMap():
     # 1/min(m,K)*p
 
     def apk(self,y_i_true, y_i_pred):
-        assert (len(y_i_pred) <= 7)
+        assert (len(y_i_pred) <= 5)
         assert (len(np.unique(y_i_pred)) == len(y_i_pred))
     
         sum_precision = 0.0
@@ -21,7 +21,7 @@ class evalMap():
             return 0.0
     
         else :
-            return sum_precision / min(len(y_i_true), 7)
+            return sum_precision / min(len(y_i_true), 5)
 
     #MAP@K計算用の関数
     def mapk(self, y_true, y_pred) -> float:
