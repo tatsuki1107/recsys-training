@@ -1,10 +1,12 @@
 version: '3.7'
 services:
   recsys_path:
-    image: "tatsuki1107/ml_training"
+    image: "tatsuki1107/obp"
     container_name: recsys_container
     volumes:
-      - ./:/work
+      - ./:/app
     ports:
       - 8888:8888
     tty: true
+    command: poetry run jupyter lab --allow-root --ip=0.0.0.0 --LabApp.token=""
+    platform: linux/amd64
