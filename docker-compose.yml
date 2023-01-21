@@ -1,12 +1,11 @@
 version: '3.7'
 services:
   recsys_path:
-    image: "tatsuki1107/obp"
+    image: "tatsuki1107/python_poetry"
     container_name: recsys_container
     volumes:
-      - ./:/app
+      - .:/app/work
     ports:
       - 8888:8888
     tty: true
     command: poetry run jupyter lab --allow-root --ip=0.0.0.0 --LabApp.token=""
-    platform: linux/amd64
