@@ -57,3 +57,20 @@ def plot_item_rank(df: pd.DataFrame) -> None:
     item_rank = [r for r in range(len(item_count))]
 
     sns.scatterplot(x=item_rank, y=item_count)
+
+
+def plot_rec_count(rec_list: np.ndarray) -> None:
+    """レコメンドされたアイテムをカウントして可視化"""
+    rec_count = {}
+    for movie_index in np.unique(rec_list):
+        rec_count[movie_index] = np.count_nonzero(rec_list == movie_index)
+
+    plt.scatter([i for i in range((len(rec_count)))],
+                list(rec_count.values()),
+                color="blue"
+                )
+    plt.ylabel("recommend count", fontdict=dict(size=20))
+    plt.title(
+        f'recommend count ({len(rec_count)} unique items)',
+        fontdict=dict(size=20)
+    )
