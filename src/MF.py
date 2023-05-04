@@ -16,6 +16,9 @@ class MF:
     lr: float
     reg: float
     n_epochs: int
+    beta1: float = 0.9
+    beta2: float = 0.999
+    eps: float = 1e-8
     random_state: int = 12345
     rating_range: tuple = (0.5, 5)
     bias: bool = False
@@ -36,6 +39,16 @@ class MF:
         self.item_bias = np.zeros(self.n_items)
         self.user_bias = np.zeros(self.n_users)
 
+        # Adam
+        self.M_P = np.zeros_like(self.P)
+        self.V_P = np.zeros_like(self.P)
+        self.M_Q = np.zeros_like(self.Q)
+        self.V_Q = np.zeros_like(self.Q)
+        self.M_item_bias = np.zeros_like(self.item_bias)
+        self.V_item_bias = np.zeros_like(self.item_bias)
+        self.M_user_bias = np.zeros_like(self.user_bias)
+        self.V_user_bias = np.zeros_like(self.user_bias)
+
     def fit(
         self,
         train: np.ndarray,
@@ -48,6 +61,7 @@ class MF:
         train_loss, test_loss = [], []
         for _ in tqdm(range(self.n_epochs)):
             self.random_.shuffle(train)
+
             for user, item, rating in train:
                 user, item = int(user), int(item)
                 error = rating - self._predict_pair(user, item)
@@ -94,16 +108,40 @@ class MF:
 
     def _update_P(self, user: int, grad: np.ndarray):
         """Update user factors."""
-        self.P[user] -= self.lr * grad
+        self.M_P[user] = self.beta1 * self.M_P[user] + (1 - self.beta1) * grad
+        self.V_P[user] = self.beta2 * self.V_P[user] + \
+            (1 - self.beta2) * (grad ** 2)
+        M_P_hat = self.M_P[user] / (1 - self.beta1)
+        V_P_hat = self.V_P[user] / (1 - self.beta2)
+        self.P[user] -= self.lr * M_P_hat / ((V_P_hat ** 0.5) + self.eps)
 
     def _update_Q(self, item: int, grad: np.ndarray):
         """Update item factors."""
-        self.Q[item] -= self.lr * grad
+        self.M_Q[item] = self.beta1 * self.M_Q[item] + (1 - self.beta1) * grad
+        self.V_Q[item] = self.beta2 * self.V_Q[item] + \
+            (1 - self.beta2) * (grad ** 2)
+        M_Q_hat = self.M_Q[item] / (1 - self.beta1)
+        V_Q_hat = self.V_Q[item] / (1 - self.beta2)
+        self.Q[item] -= self.lr * M_Q_hat / ((V_Q_hat ** 0.5) + self.eps)
 
     def _update_user_bias(self, user: int, grad: float):
         """Update user bias."""
-        self.user_bias[user] -= self.lr * grad
+        self.M_user_bias[user] = self.beta1 * \
+            self.M_user_bias[user] + (1 - self.beta1) * grad
+        self.V_user_bias[user] = self.beta2 * \
+            self.V_user_bias[user] + (1 - self.beta2) * (grad ** 2)
+        M_user_bias_hat = self.M_user_bias[user] / (1 - self.beta1)
+        V_user_bias_hat = self.V_user_bias[user] / (1 - self.beta2)
+        self.user_bias[user] -= self.lr * M_user_bias_hat / \
+            ((V_user_bias_hat ** 0.5) + self.eps)
 
     def _update_item_bias(self, item: int, grad: float):
         """Update item bias."""
-        self.item_bias[item] -= self.lr * grad
+        self.M_item_bias[item] = self.beta1 * \
+            self.M_item_bias[item] + (1 - self.beta1) * grad
+        self.V_item_bias[item] = self.beta2 * \
+            self.V_item_bias[item] + (1 - self.beta2) * (grad ** 2)
+        M_item_bias_hat = self.M_item_bias[item] / (1 - self.beta1)
+        V_item_bias_hat = self.V_item_bias[item] / (1 - self.beta2)
+        self.item_bias[item] -= self.lr * M_item_bias_hat / \
+            ((V_item_bias_hat ** 0.5) + self.eps)
